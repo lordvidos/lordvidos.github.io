@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vidos | PNPT Debrief Notes</title>
+  <meta name="description" content="PNPT debrief notes and checklist.">
+  <link rel="stylesheet" href="../assets/style.css">
+  <link rel="stylesheet" href="../assets/pnpt.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="../index.html">Vidos</a>
+  <nav>
+    <a href="../index.html">Home</a>
+    <a href="../about.html">About</a>
+    <a href="../projects.html">Projects</a>
+    <a href="../homelab.html">Home Lab</a>
+    <a href="../certifications.html">Certifications</a>
+    <a href="../links.html">Links</a>
+    <a href="../contact.html">Contact</a>
+  </nav>
+</header>
+
+<main>
+  <section class="page-heading">
+    <p class="eyebrow">PNPT Notes</p>
+    <h1>Debrief</h1>
+    <p class="lead">Use this page to prepare your 15-minute debrief, key points, timeline, impact, and remediation summary.</p>
+
+    <div class="pnpt-subnav">
+      <a href="index.html">Hub</a>
+      <a href="osint.html">OSINT</a>
+      <a href="ad.html">AD</a>
+      <a href="privesc.html">PrivEsc</a>
+      <a href="reporting.html">Reporting</a>
+      <a class="active" href="debrief.html">Debrief</a>
+    </div>
+  </section>
+
+  <section class="grid two">
+    <article class="card">
+      <span class="tag">Notes</span>
+      <h2>Debrief Working Notes</h2>
+      <textarea id="page-notes" class="pnpt-textarea" placeholder="Add debrief notes here..."></textarea>
+
+      <div class="pnpt-actions">
+        <button type="button" class="pnpt-btn" onclick="saveNotes()">Save Notes</button>
+        <button type="button" class="pnpt-btn" onclick="downloadNotes()">Download Notes</button>
+        <label for="notes-upload" class="pnpt-upload-label">Import Notes</label>
+        <input type="file" id="notes-upload" accept=".txt,.md" style="display:none;">
+        <button type="button" class="pnpt-btn" onclick="clearNotes()">Clear Notes</button>
+      </div>
+    </article>
+
+    <article class="card">
+      <span class="tag">Checklist</span>
+      <h2>Debrief Checklist</h2>
+      <div class="pnpt-checklist">
+        <label><input type="checkbox" class="local-check" data-key="deb-start"> Prepare opening summary</label>
+        <label><input type="checkbox" class="local-check" data-key="deb-recon"> Summarize recon / initial access clearly</label>
+        <label><input type="checkbox" class="local-check" data-key="deb-path"> Explain attack path cleanly</label>
+        <label><input type="checkbox" class="local-check" data-key="deb-impact"> Prepare impact summary</label>
+        <label><input type="checkbox" class="local-check" data-key="deb-remed"> Prepare remediation summary</label>
+        <label><input type="checkbox" class="local-check" data-key="deb-practice"> Practice 15-minute delivery</label>
+      </div>
+
+      <div class="pnpt-actions">
+        <button type="button" class="pnpt-btn" onclick="resetChecklist()">Reset Checklist</button>
+      </div>
+    </article>
+
+    <article class="card">
+      <span class="tag">Outline</span>
+      <h2>Suggested Flow</h2>
+      <ul>
+        <li>Opening summary</li>
+        <li>How access was achieved</li>
+        <li>How escalation and movement occurred</li>
+        <li>What the impact was</li>
+        <li>What should be fixed first</li>
+      </ul>
+    </article>
+
+    <article class="card">
+      <span class="tag">Reminder</span>
+      <h2>Presentation Tip</h2>
+      <p>Keep the story concise and outcome-focused. Don’t try to narrate every single command—highlight the path, evidence, risk, and remediation.</p>
+    </article>
+  </section>
+</main>
+
+<footer><span>© <span id="year"></span> Vidos</span></footer>
+<script src="../assets/script.js"></script>
+<script>
+  const pageKey = "pnpt_debrief_notes_v1";
+
+  function saveNotes() {
+    localStorage.setItem(pageKey, document.getElementById("page-notes").value);
+    alert("Notes saved in this browser.");
+  }
+
+  function loadNotes() {
+    const saved = localStorage.getItem(pageKey);
+    if (saved !== null) document.getElementById("page-notes").value = saved;
+  }
+
+  function clearNotes() {
+    if (confirm("Clear saved notes from this browser?")) {
+      localStorage.removeItem(pageKey);
+      document.getElementById("page-notes").value = "";
+    }
+  }
+
+  function downloadNotes() {
+    const notes = document.getElementById("page-notes").value;
+    const blob = new Blob([notes], { type: "text/plain" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "pnpt-debrief-notes.txt";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function importNotes(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById("page-notes").value = e.target.result;
+      localStorage.setItem(pageKey, e.target.result);
+      alert("Notes imported and saved in this browser.");
+    };
+    reader.readAsText(file);
+  }
+
+  function loadChecklist() {
+    document.querySelectorAll(".local-check").forEach(cb => {
+      cb.checked = localStorage.getItem(cb.dataset.key) === "true";
+      cb.addEventListener("change", () => localStorage.setItem(cb.dataset.key, cb.checked));
+    });
+  }
+
+  function resetChecklist() {
+    if (confirm("Reset checklist?")) {
+      document.querySelectorAll(".local-check").forEach(cb => {
+        cb.checked = false;
+        localStorage.removeItem(cb.dataset.key);
+      });
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    loadNotes();
+    loadChecklist();
+
+    const upload = document.getElementById("notes-upload");
+    if (upload) upload.addEventListener("change", importNotes);
+
+    const area = document.getElementById("page-notes");
+    if (area) area.addEventListener("input", () => localStorage.setItem(pageKey, area.value));
+  });
+</script>
+</body>
+</html>
