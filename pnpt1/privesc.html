@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vidos | PNPT PrivEsc Notes</title>
+  <meta name="description" content="PNPT privilege escalation notes and checklist.">
+  <link rel="stylesheet" href="../assets/style.css">
+  <link rel="stylesheet" href="../assets/pnpt.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="../index.html">Vidos</a>
+  <nav>
+    <a href="../index.html">Home</a>
+    <a href="../about.html">About</a>
+    <a href="../projects.html">Projects</a>
+    <a href="../homelab.html">Home Lab</a>
+    <a href="../certifications.html">Certifications</a>
+    <a href="../links.html">Links</a>
+    <a href="../contact.html">Contact</a>
+  </nav>
+</header>
+
+<main>
+  <section class="page-heading">
+    <p class="eyebrow">PNPT Notes</p>
+    <h1>Privilege Escalation</h1>
+    <p class="lead">Store Windows and Linux privilege escalation notes, commands, findings, and checklists here.</p>
+
+    <div class="pnpt-subnav">
+      <a href="index.html">Hub</a>
+      <a href="osint.html">OSINT</a>
+      <a href="ad.html">AD</a>
+      <a class="active" href="privesc.html">PrivEsc</a>
+      <a href="reporting.html">Reporting</a>
+      <a href="debrief.html">Debrief</a>
+    </div>
+  </section>
+
+  <section class="grid two">
+    <article class="card">
+      <span class="tag">Notes</span>
+      <h2>PrivEsc Working Notes</h2>
+      <textarea id="page-notes" class="pnpt-textarea" placeholder="Add privilege escalation notes here..."></textarea>
+
+      <div class="pnpt-actions">
+        <button type="button" class="pnpt-btn" onclick="saveNotes()">Save Notes</button>
+        <button type="button" class="pnpt-btn" onclick="downloadNotes()">Download Notes</button>
+        <label for="notes-upload" class="pnpt-upload-label">Import Notes</label>
+        <input type="file" id="notes-upload" accept=".txt,.md" style="display:none;">
+        <button type="button" class="pnpt-btn" onclick="clearNotes()">Clear Notes</button>
+      </div>
+    </article>
+
+    <article class="card">
+      <span class="tag">Checklist</span>
+      <h2>PrivEsc Checklist</h2>
+      <div class="pnpt-checklist">
+        <label><input type="checkbox" class="local-check" data-key="pe-linux-basics"> Review Linux privilege escalation paths</label>
+        <label><input type="checkbox" class="local-check" data-key="pe-win-basics"> Review Windows privilege escalation paths</label>
+        <label><input type="checkbox" class="local-check" data-key="pe-services"> Review services / scheduled tasks paths</label>
+        <label><input type="checkbox" class="local-check" data-key="pe-creds"> Review credential harvesting opportunities</label>
+        <label><input type="checkbox" class="local-check" data-key="pe-peas"> Practice PEAS usage and interpretation</label>
+        <label><input type="checkbox" class="local-check" data-key="pe-manual"> Practice manual privilege escalation checks</label>
+      </div>
+
+      <div class="pnpt-actions">
+        <button type="button" class="pnpt-btn" onclick="resetChecklist()">Reset Checklist</button>
+      </div>
+    </article>
+
+    <article class="card">
+      <span class="tag">Focus</span>
+      <h2>What to Track</h2>
+      <ul>
+        <li>Misconfigurations</li>
+        <li>Weak permissions</li>
+        <li>Credential material</li>
+        <li>Service abuse paths</li>
+        <li>Manual checks and validation</li>
+      </ul>
+    </article>
+
+    <article class="card">
+      <span class="tag">Reminder</span>
+      <h2>Keep It Practical</h2>
+      <p>Document commands, why they matter, what they revealed, and how they contributed to the overall attack path.</p>
+    </article>
+  </section>
+</main>
+
+<footer><span>© <span id="year"></span> Vidos</span></footer>
+<script src="../assets/script.js"></script>
+<script>
+  const pageKey = "pnpt_privesc_notes_v1";
+
+  function saveNotes() {
+    localStorage.setItem(pageKey, document.getElementById("page-notes").value);
+    alert("Notes saved in this browser.");
+  }
+
+  function loadNotes() {
+    const saved = localStorage.getItem(pageKey);
+    if (saved !== null) document.getElementById("page-notes").value = saved;
+  }
+
+  function clearNotes() {
+    if (confirm("Clear saved notes from this browser?")) {
+      localStorage.removeItem(pageKey);
+      document.getElementById("page-notes").value = "";
+    }
+  }
+
+  function downloadNotes() {
+    const notes = document.getElementById("page-notes").value;
+    const blob = new Blob([notes], { type: "text/plain" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "pnpt-privesc-notes.txt";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function importNotes(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById("page-notes").value = e.target.result;
+      localStorage.setItem(pageKey, e.target.result);
+      alert("Notes imported and saved in this browser.");
+    };
+    reader.readAsText(file);
+  }
+
+  function loadChecklist() {
+    document.querySelectorAll(".local-check").forEach(cb => {
+      cb.checked = localStorage.getItem(cb.dataset.key) === "true";
+      cb.addEventListener("change", () => localStorage.setItem(cb.dataset.key, cb.checked));
+    });
+  }
+
+  function resetChecklist() {
+    if (confirm("Reset checklist?")) {
+      document.querySelectorAll(".local-check").forEach(cb => {
+        cb.checked = false;
+        localStorage.removeItem(cb.dataset.key);
+      });
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    loadNotes();
+    loadChecklist();
+
+    const upload = document.getElementById("notes-upload");
+    if (upload) upload.addEventListener("change", importNotes);
+
+    const area = document.getElementById("page-notes");
+    if (area) area.addEventListener("input", () => localStorage.setItem(pageKey, area.value));
+  });
+</script>
+</body>
+</html>

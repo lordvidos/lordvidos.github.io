@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vidos | PNPT AD Notes</title>
+  <meta name="description" content="PNPT Active Directory notes and checklist.">
+  <link rel="stylesheet" href="../assets/style.css">
+  <link rel="stylesheet" href="../assets/pnpt.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="../index.html">Vidos</a>
+  <nav>
+    <a href="../index.html">Home</a>
+    <a href="../about.html">About</a>
+    <a href="../projects.html">Projects</a>
+    <a href="../homelab.html">Home Lab</a>
+    <a href="../certifications.html">Certifications</a>
+    <a href="../links.html">Links</a>
+    <a href="../contact.html">Contact</a>
+  </nav>
+</header>
+
+<main>
+  <section class="page-heading">
+    <p class="eyebrow">PNPT Notes</p>
+    <h1>Active Directory</h1>
+    <p class="lead">Keep internal enumeration notes, users, groups, shares, BloodHound paths, ACLs, and domain escalation workflow here.</p>
+
+    <div class="pnpt-subnav">
+      <a href="index.html">Hub</a>
+      <a href="osint.html">OSINT</a>
+      <a class="active" href="ad.html">AD</a>
+      <a href="privesc.html">PrivEsc</a>
+      <a href="reporting.html">Reporting</a>
+      <a href="debrief.html">Debrief</a>
+    </div>
+  </section>
+
+  <section class="grid two">
+    <article class="card">
+      <span class="tag">Notes</span>
+      <h2>AD Working Notes</h2>
+      <textarea id="page-notes" class="pnpt-textarea" placeholder="Add Active Directory notes here..."></textarea>
+
+      <div class="pnpt-actions">
+        <button type="button" class="pnpt-btn" onclick="saveNotes()">Save Notes</button>
+        <button type="button" class="pnpt-btn" onclick="downloadNotes()">Download Notes</button>
+        <label for="notes-upload" class="pnpt-upload-label">Import Notes</label>
+        <input type="file" id="notes-upload" accept=".txt,.md" style="display:none;">
+        <button type="button" class="pnpt-btn" onclick="clearNotes()">Clear Notes</button>
+      </div>
+    </article>
+
+    <article class="card">
+      <span class="tag">Checklist</span>
+      <h2>AD Checklist</h2>
+      <div class="pnpt-checklist">
+        <label><input type="checkbox" class="local-check" data-key="ad-hosts"> Enumerate hosts and naming convention</label>
+        <label><input type="checkbox" class="local-check" data-key="ad-shares"> Enumerate SMB shares</label>
+        <label><input type="checkbox" class="local-check" data-key="ad-users"> Enumerate users and groups</label>
+        <label><input type="checkbox" class="local-check" data-key="ad-bloodhound"> Build BloodHound graph / path review</label>
+        <label><input type="checkbox" class="local-check" data-key="ad-kerberoast"> Check Kerberoasting opportunities</label>
+        <label><input type="checkbox" class="local-check" data-key="ad-acl"> Review ACL / delegation abuse paths</label>
+        <label><input type="checkbox" class="local-check" data-key="ad-lateral"> Map lateral movement options</label>
+        <label><input type="checkbox" class="local-check" data-key="ad-dc"> Track domain controller compromise path</label>
+      </div>
+
+      <div class="pnpt-actions">
+        <button type="button" class="pnpt-btn" onclick="resetChecklist()">Reset Checklist</button>
+      </div>
+    </article>
+
+    <article class="card">
+      <span class="tag">Focus</span>
+      <h2>Key Areas</h2>
+      <ul>
+        <li>Host and service enumeration</li>
+        <li>Users, groups, shares, and permissions</li>
+        <li>BloodHound path analysis</li>
+        <li>Kerberoasting and ACL abuse</li>
+        <li>Lateral movement and DC path</li>
+      </ul>
+    </article>
+
+    <article class="card">
+      <span class="tag">Reminder</span>
+      <h2>Documentation Tip</h2>
+      <p>Track the attack path clearly as you go. Write down not just what worked, but why it worked and what it exposed.</p>
+    </article>
+  </section>
+</main>
+
+<footer><span>© <span id="year"></span> Vidos</span></footer>
+<script src="../assets/script.js"></script>
+<script>
+  const pageKey = "pnpt_ad_notes_v1";
+
+  function saveNotes() {
+    localStorage.setItem(pageKey, document.getElementById("page-notes").value);
+    alert("Notes saved in this browser.");
+  }
+
+  function loadNotes() {
+    const saved = localStorage.getItem(pageKey);
+    if (saved !== null) document.getElementById("page-notes").value = saved;
+  }
+
+  function clearNotes() {
+    if (confirm("Clear saved notes from this browser?")) {
+      localStorage.removeItem(pageKey);
+      document.getElementById("page-notes").value = "";
+    }
+  }
+
+  function downloadNotes() {
+    const notes = document.getElementById("page-notes").value;
+    const blob = new Blob([notes], { type: "text/plain" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "pnpt-ad-notes.txt";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function importNotes(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById("page-notes").value = e.target.result;
+      localStorage.setItem(pageKey, e.target.result);
+      alert("Notes imported and saved in this browser.");
+    };
+    reader.readAsText(file);
+  }
+
+  function loadChecklist() {
+    document.querySelectorAll(".local-check").forEach(cb => {
+      cb.checked = localStorage.getItem(cb.dataset.key) === "true";
+      cb.addEventListener("change", () => localStorage.setItem(cb.dataset.key, cb.checked));
+    });
+  }
+
+  function resetChecklist() {
+    if (confirm("Reset checklist?")) {
+      document.querySelectorAll(".local-check").forEach(cb => {
+        cb.checked = false;
+        localStorage.removeItem(cb.dataset.key);
+      });
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    loadNotes();
+    loadChecklist();
+
+    const upload = document.getElementById("notes-upload");
+    if (upload) upload.addEventListener("change", importNotes);
+
+    const area = document.getElementById("page-notes");
+    if (area) area.addEventListener("input", () => localStorage.setItem(pageKey, area.value));
+  });
+</script>
+</body>
+</html>
