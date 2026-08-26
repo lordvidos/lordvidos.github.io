@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vidos | PNPT Study Hub</title>
+  <meta name="description" content="PNPT study hub with notes, resources, tooling, reporting checklists, and exam preparation guidance.">
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    .checklist label {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .pnpt-actions {
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pnpt-upload-label {
+      display: inline-block;
+      cursor: pointer;
+      padding: 10px 14px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    .pnpt-textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font: inherit;
+      line-height: 1.5;
+      resize: vertical;
+      min-height: 280px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #111;
+      color: #fff;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .resource-group h3 {
+      margin-top: 16px;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="index.html">Vidos</a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="projects.html">Projects</a>
+    <a href="homelab.html">Home Lab</a>
+    <a href="certifications.html">Certifications</a>
+    <a href="links.html">Links</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</header>
+
+<main>
+  <section class="page-heading">
+    <p class="eyebrow">Certification Hub</p>
+    <h1>PNPT Study Hub</h1>
+    <p class="lead">A centralized page for PNPT preparation, notes, tools, reporting, checklists, and exam planning.</p>
+  </section>
+
+  <section class="card">
+    <span class="tag">Important</span>
+    <h2>Use Policy</h2>
+    <p>This page is for personal study and preparation. Do not post proprietary exam content, leaked material, exact lab solutions, or anything that violates exam terms.</p>
+  </section>
+
+  <section class="grid two">
+    <article class="card">
+      <span class="tag">Notes</span>
+      <h2>Study Notes</h2>
+      <p>Add quick notes here. These save in your browser on this device.</p>
+
+      <textarea id="pnpt-notes" class="pnpt-textarea" placeholder="Add PNPT notes here..."></textarea>
+
+      <div class="pnpt-actions">
+        <button type="button" onclick="savePnptNotes()">Save Notes</button>
+        <button type="button" onclick="downloadPnptNotes()">Download Notes</button>
+
+        <label for="pnpt-notes-upload" class="pnpt-upload-label">Import Notes</label>
+        <input type="file" id="pnpt-notes-upload" accept=".txt,.md" style="display:none;">
+
+        <button type="button" onclick="clearPnptNotes()">Clear Notes</button>
+      </div>
+    </article>
+
+    <article class="card">
+      <span class="tag">Checklist</span>
+      <h2>PNPT Progress Checklist</h2>
+      <p>Check items off as you go. These save in your browser on this device.</p>
+
+      <div class="checklist">
+        <label><input type="checkbox" class="pnpt-check" data-key="check-osint-course"> Complete OSINT study review</label>
+        <label><input type="checkbox" class="pnpt-check" data-key="check-external-recon"> Practice external reconnaissance workflow</label>
+        <label><input type="checkbox" class="pnpt-check" data-key="check-web-foothold"> Review web foothold techniques</label>
+        <label><input type="checkbox" class="pnpt-check" data-key="check-ad-enum"> Practice Active Directory enumeration</label>
+        <label><input type="checkbox" class="pnpt-check" data-key="check-bloodhound"> Review BloodHound attack path analysis</label>
+        <label><input type="checkbox" class="pnpt-check" data-key="check-linux-privesc"> Practice Linux privilege escalation</label>
+        <label><input type="checkbox" class="pnpt-check" data-key="check-windows-privesc"> Practice Windows privilege escalation</label>
+        <label><input type="checkbox" class="pnpt-check" data-key="check-impacket"> Verify Impacket workflow</label>
+        <label><input type="checkbox" class="pnpt-check" data-key="check-tooling"> Build and test exam VM/tooling</label>
+        <label><input type="checkbox" class="pnpt-check" data-key="check-notes-workflow"> Prepare note-taking and screenshot workflow</label>
+        <label><input type="checkbox" class="pnpt-check" data-key="check-report-template"> Build report template</label>
+        <label><input type="checkbox" class="pnpt-check" data-key="check-ai-disclosure"> Prepare tool/AI disclosure section</label>
+        <label><input type="checkbox" class="pnpt-check" data-key="check-mock-report"> Complete one mock report</label>
+        <label><input type="checkbox" class="pnpt-check" data-key="check-debrief"> Practice 15-minute debrief</label>
+        <label><input type="checkbox" class="pnpt-check" data-key="check-exam-plan"> Build 5-day exam pacing plan</label>
+      </div>
+
+      <div class="pnpt-actions">
+        <button type="button" onclick="resetPnptChecklist()">Reset Checklist</button>
+      </div>
+    </article>
+
+    <article class="card">
+      <span class="tag">Overview</span>
+      <h2>Exam Overview</h2>
+      <ul>
+        <li>Professional-level practical pentest exam</li>
+        <li>OSINT, foothold, internal movement, and AD compromise focus</li>
+        <li>Professional report required</li>
+        <li>Live debrief required</li>
+        <li>Use this section for your own reminders and high-level notes</li>
+      </ul>
+    </article>
+
+    <article class="card">
+      <span class="tag">Planning</span>
+      <h2>Study Plan</h2>
+      <ul>
+        <li>OSINT and external recon</li>
+        <li>Web foothold concepts</li>
+        <li>Active Directory enumeration and attack paths</li>
+        <li>Windows and Linux privilege escalation</li>
+        <li>Reporting and debrief preparation</li>
+      </ul>
+    </article>
+
+    <article class="card">
+      <span class="tag">Notes</span>
+      <h2>OSINT Notes</h2>
+      <p>Keep notes on domains, subdomains, employee naming patterns, usernames, email formats, metadata, breach data, and reconnaissance methodology.</p>
+      <a href="#">Add OSINT notes link →</a>
+    </article>
+
+    <article class="card">
+      <span class="tag">Notes</span>
+      <h2>Active Directory Notes</h2>
+      <p>Track enumeration methods, domain structure, shares, users, groups, BloodHound paths, Kerberoasting, ACL abuse, lateral movement, and privilege escalation paths.</p>
+      <a href="#">Add AD notes link →</a>
+    </article>
+
+    <article class="card">
+      <span class="tag">Notes</span>
+      <h2>Privilege Escalation Notes</h2>
+      <p>Store Windows and Linux privilege escalation commands, checklists, common findings, and references you want available during study and practice.</p>
+      <a href="#">Add PrivEsc notes link →</a>
+    </article>
+
+    <article class="card">
+      <span class="tag">Tools</span>
+      <h2>Tool Checklist</h2>
+      <ul>
+        <li>Nmap</li>
+        <li>Burp Suite</li>
+        <li>Impacket</li>
+        <li>BloodHound / SharpHound</li>
+        <li>NetExec / CrackMapExec</li>
+        <li>Responder</li>
+        <li>LinPEAS / WinPEAS</li>
+        <li>Note-taking, screenshot, and reporting tools</li>
+      </ul>
+    </article>
+
+    <article class="card">
+      <span class="tag">Reporting</span>
+      <h2>Report Checklist</h2>
+      <ul>
+        <li>Executive summary</li>
+        <li>Scope and methodology</li>
+        <li>Attack narrative</li>
+        <li>Evidence and screenshots</li>
+        <li>Findings and severity/impact</li>
+        <li>Remediation guidance</li>
+        <li>Tool disclosure / AI disclosure</li>
+      </ul>
+    </article>
+
+    <article class="card">
+      <span class="tag">Debrief</span>
+      <h2>15-Minute Debrief Prep</h2>
+      <p>Prepare a clean narrative: recon, foothold, internal enumeration, escalation path, domain compromise, risk, and recommended remediation.</p>
+      <a href="#">Add debrief notes link →</a>
+    </article>
+
+    <article class="card">
+      <span class="tag">Exam Day</span>
+      <h2>Exam Day Checklist</h2>
+      <ul>
+        <li>VM updated and tested</li>
+        <li>Tooling verified</li>
+        <li>Report template ready</li>
+        <li>Notes and screenshots workflow ready</li>
+        <li>Disclosure section prepared</li>
+        <li>Pacing and rest plan prepared</li>
+      </ul>
+    </article>
+
+    <article class="card">
+      <span class="tag">Resources</span>
+      <h2>PNPT / TCM Resources</h2>
+
+      <div class="resource-group">
+        <h3>Official</h3>
+        <ul>
+          <li><a href="https://certifications.tcm-sec.com/pnpt/" target="_blank" rel="noopener">Official PNPT page</a></li>
+          <li><a href="https://academy.tcm-sec.com/" target="_blank" rel="noopener">TCM Academy</a></li>
+          <li><a href="https://tcm-sec.com/" target="_blank" rel="noopener">TCM Security Website</a></li>
+          <li><a href="https://discord.gg/tcm" target="_blank" rel="noopener">Course Discord</a></li>
+        </ul>
+
+        <h3>Heath Adams / The Cyber Mentor</h3>
+        <ul>
+          <li><a href="https://www.thecybermentor.com/" target="_blank" rel="noopener">The Cyber Mentor Website</a></li>
+          <li><a href="https://twitter.com/thecybermentor" target="_blank" rel="noopener">The Cyber Mentor Twitter</a></li>
+          <li><a href="https://twitch.tv/thecybermentor" target="_blank" rel="noopener">The Cyber Mentor Twitch</a></li>
+          <li><a href="https://linkedin.com/in/heathadams" target="_blank" rel="noopener">Heath Adams LinkedIn</a></li>
+        </ul>
+
+        <h3>Study / Reference</h3>
+        <ul>
+          <li><a href="https://book.hacktricks.wiki/" target="_blank" rel="noopener">HackTricks</a></li>
+          <li><a href="https://wadcoms.github.io/" target="_blank" rel="noopener">WADComs</a></li>
+          <li><a href="https://lolbas-project.github.io/" target="_blank" rel="noopener">LOLBAS</a></li>
+          <li><a href="https://gtfobins.github.io/" target="_blank" rel="noopener">GTFOBins</a></li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="card">
+      <span class="tag">Practice</span>
+      <h2>Practice Focus Areas</h2>
+      <ul>
+        <li>OSINT workflow and target profiling</li>
+        <li>Web recon and foothold development</li>
+        <li>Internal enumeration speed</li>
+        <li>Active Directory attack-path identification</li>
+        <li>Privilege escalation repetition</li>
+        <li>Writing concise findings and remediation</li>
+      </ul>
+    </article>
+  </section>
+</main>
+
+<footer><span>© <span id="year"></span> Vidos</span></footer>
+<script src="assets/script.js"></script>
+<script>
+  const notesKey = "pnpt_notes_v1";
+
+  function savePnptNotes() {
+    const notes = document.getElementById("pnpt-notes").value;
+    localStorage.setItem(notesKey, notes);
+    alert("Notes saved in this browser.");
+  }
+
+  function loadPnptNotes() {
+    const saved = localStorage.getItem(notesKey);
+    if (saved !== null) {
+      document.getElementById("pnpt-notes").value = saved;
+    }
+  }
+
+  function clearPnptNotes() {
+    if (confirm("Clear saved notes from this browser?")) {
+      localStorage.removeItem(notesKey);
+      document.getElementById("pnpt-notes").value = "";
+    }
+  }
+
+  function downloadPnptNotes() {
+    const notes = document.getElementById("pnpt-notes").value;
+    const blob = new Blob([notes], { type: "text/plain" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "pnpt-notes.txt";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function importPnptNotes(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById("pnpt-notes").value = e.target.result;
+      localStorage.setItem(notesKey, e.target.result);
+      alert("Notes imported and saved in this browser.");
+    };
+    reader.readAsText(file);
+  }
+
+  function loadChecklist() {
+    document.querySelectorAll(".pnpt-check").forEach(cb => {
+      const key = cb.dataset.key;
+      cb.checked = localStorage.getItem(key) === "true";
+      cb.addEventListener("change", () => {
+        localStorage.setItem(key, cb.checked);
+      });
+    });
+  }
+
+  function resetPnptChecklist() {
+    if (confirm("Reset all checklist items?")) {
+      document.querySelectorAll(".pnpt-check").forEach(cb => {
+        cb.checked = false;
+        localStorage.removeItem(cb.dataset.key);
+      });
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    loadPnptNotes();
+    loadChecklist();
+
+    const uploadInput = document.getElementById("pnpt-notes-upload");
+    if (uploadInput) {
+      uploadInput.addEventListener("change", importPnptNotes);
+    }
+
+    const notesArea = document.getElementById("pnpt-notes");
+    if (notesArea) {
+      notesArea.addEventListener("input", () => {
+        localStorage.setItem(notesKey, notesArea.value);
+      });
+    }
+  });
+</script>
+</body>
+</html>
